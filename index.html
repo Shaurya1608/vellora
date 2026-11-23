@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en" class="intro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velora — Artisan Jam</title>
+  <link rel="preconnect" href="https://images.higgs.ai" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #FAF4EC;
+      --hero-bg: #FDF1E3;
+      --bg3: #F2E6D3;
+      --accent: #C79A67;
+      --ink: #2A2118;
+      --sec-text: #4a3d30;
+      --mark: #EDE3D4;
+      --dark: #2B1F14;
+      --light-text: #F6EEE2;
+      --chip-hairline: rgba(42, 33, 24, 0.18);
+      --benefit-hairline: rgba(42, 33, 24, 0.16);
+
+      --s: 1px;
+      --c: 1px;
+      --fl: 0px;
+      --ft: 0px;
+
+      --chip: 116px;
+      --cn: 21px;
+      --cs: 17.5px;
+      --rt: 96px;
+      --rh: 25px;
+      --rp: 16.5px;
+      --rg: 40px;
+      --rw: 330px;
+      --th: 34px;
+      --tf: 16px;
+      --tb: 30px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'Outfit', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    img {
+      display: block;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Fixed 100svh Stage */
+    .stage {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      background-color: var(--bg);
+    }
+
+    /* .frame container: 1440s x 900s centered in viewport */
+    .frame {
+      position: absolute;
+      left: var(--fl);
+      top: var(--ft);
+      width: calc(1440 * var(--s));
+      height: calc(900 * var(--s));
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* 1. Navigation */
+    .site-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: calc(28 * var(--c)) calc(42 * var(--c)) 0;
+      font-size: max(12px, calc(17 * var(--c)));
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      transition: color 0.5s ease;
+      pointer-events: auto;
+    }
+
+    .site-nav.light {
+      color: var(--light-text);
+    }
+
+    .nav-link {
+      position: relative;
+      padding: 6px 2px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: currentColor;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.35s ease;
+    }
+
+    .nav-link:hover::after {
+      transform: scaleX(1);
+    }
+
+    /* 2. Hero Layer */
+    .layer-hero {
+      position: absolute;
+      inset: 0;
+      background-color: var(--hero-bg);
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+
+    .hero-frame {
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    .hero-plate {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 60%;
+      z-index: 1;
+    }
+
+    .hero-haze-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(250, 244, 236, 0.4) 0%,
+        rgba(250, 244, 236, 0.15) 18%,
+        rgba(0, 0, 0, 0) 40%,
+        rgba(0, 0, 0, 0.08) 100%
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .hero-video {
+      position: absolute;
+      width: 102.78%;
+      left: -0.14%;
+      top: -5.22%;
+      aspect-ratio: 1168 / 784;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.6s linear;
+    }
+
+    .hero-video.vid-a {
+      z-index: 2;
+    }
+
+    .hero-video.vid-b {
+      z-index: 3;
+    }
+
+    .wordmark {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 500;
+      color: rgba(42, 33, 24, 0.36);
+      background: linear-gradient(180deg, rgba(42, 33, 24, 0.44) 0%, rgba(42, 33, 24, 0.22) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 30px rgba(199, 154, 103, 0.20));
+      line-height: 1;
+      letter-spacing: 0.14em;
+      text-indent: 0.14em;
+      text-align: center;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 2;
+      will-change: opacity, top;
+    }
+      pointer-events: none;
+      z-index: 2;
+      will-change: opacity, top;
+    }
+
+    /* 3. Ingredients Layer */
+    .layer-ingr {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .chip {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transform: translate(-50%, calc(-0.5 * var(--chip)));
+      will-change: transform, opacity;
+      pointer-events: auto;
+    }
+
+    .chip .in-w {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.5s cubic-bezier(.25, .1, .25, 1), transform 0.7s cubic-bezier(.3, 0, .15, 1);
+    }
+
+    .stage.ingr-on .chip .in-w {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .chip-circle {
+      width: var(--chip);
+      height: var(--chip);
+      border-radius: 50%;
+      border: 1px solid var(--chip-hairline);
+      background-color: var(--bg);
+      padding: 4%;
+      box-shadow: 0 4px 16px rgba(42, 33, 24, 0.05);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chip-circle i {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-size: 204.8% 204.8%;
+      background-repeat: no-repeat;
+    }
+
+    .chip-name {
+      margin-top: calc(0.2 * var(--chip));
+      font-size: var(--cn);
+      font-weight: 500;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .chip-desc {
+      font-size: var(--cs);
+      line-height: 1.3;
+      color: var(--sec-text);
+      max-width: calc(2.3 * var(--chip));
+      margin-top: 2px;
+    }
+
+    /* 4. Benefits Layer */
+    .layer-bene {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg3);
+      z-index: 4;
+      transform: translateY(100%);
+      will-change: transform;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .rows {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-44%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--rg);
+      pointer-events: auto;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: calc(0.28 * var(--rt));
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.6s cubic-bezier(.25, .1, .25, 1), transform 1s cubic-bezier(.3, 0, .05, 1);
+      will-change: transform, opacity;
+    }
+
+    .stage.bene-on .row {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .stage.bene-on .row:nth-child(2) {
+      transition-delay: 0.12s;
+    }
+
+    .stage.bene-on .row:nth-child(3) {
+      transition-delay: 0.24s;
+    }
+
+    .row-thumb {
+      width: var(--rt);
+      height: var(--rt);
+      border-radius: 50%;
+      border: 1px solid var(--benefit-hairline);
+      background-color: var(--bg3);
+      padding: 4%;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(42, 33, 24, 0.04);
+      overflow: hidden;
+    }
+
+    .row-thumb i {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-size: 204.8% 204.8%;
+      background-repeat: no-repeat;
+    }
+
+    .row-text {
+      max-width: var(--rw);
+    }
+
+    .row-text h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: var(--rh);
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    .row-text p {
+      font-family: 'Outfit', sans-serif;
+      font-size: var(--rp);
+      line-height: 1.45;
+      color: var(--sec-text);
+      margin-top: 0.25em;
+    }
+
+    /* 5. Scene Layer (Dark Kitchen) */
+    .layer-scene {
+      position: absolute;
+      inset: 0;
+      background-color: var(--dark);
+      z-index: 4;
+      transform: translateY(100%);
+      will-change: transform;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .scene-plate {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      pointer-events: none;
+    }
+
+    #crop-blueberry {
+      background-image: url('blueberry_chip.png') !important;
+      background-position: center center !important;
+      background-size: cover !important;
+    }
+
+    .cta-col {
+      position: absolute;
+      left: 50%;
+      top: max(80px, calc(var(--ut, 0px) + 85 * var(--c)));
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: var(--light-text);
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    .tagline {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: var(--th);
+      letter-spacing: 0.2em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s ease, transform 1s cubic-bezier(.22, 1, .36, 1);
+      will-change: transform, opacity;
+    }
+
+    .discover-btn {
+      display: inline-block;
+      margin-top: var(--tb);
+      border: 1px solid rgba(246, 238, 226, 0.7);
+      border-radius: 999px;
+      padding: 0.7em 2.2em;
+      font-size: var(--tf);
+      letter-spacing: 0.04em;
+      color: var(--light-text);
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.9s ease 0.15s, transform 1s cubic-bezier(.22, 1, .36, 1) 0.15s, background-color 0.3s ease, color 0.3s ease;
+      will-change: transform, opacity;
+    }
+
+    .discover-btn:hover {
+      background-color: #F6EEE2;
+      color: #2B1F14;
+    }
+
+    .stage.scene-on .tagline {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stage.scene-on .discover-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 6. Jar & Hand */
+    .jar-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      transform-origin: 50% 100%;
+      filter: drop-shadow(0 18px 24px rgba(42, 33, 24, 0.18));
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .hand-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 6;
+      transform-origin: 0 0;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* Waiting / Intro State */
+    html.intro .site-nav,
+    html.intro .wordmark,
+    html.intro .hero-frame,
+    html.intro .jar-img {
+      opacity: 0;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-video {
+        display: none !important;
+      }
+      .hero-plate {
+        opacity: 1 !important;
+      }
+      .chip .in-w,
+      .row,
+      .tagline,
+      .discover-btn {
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <!-- 1. Navigation -->
+    <nav class="site-nav" id="nav">
+      <a href="#home" class="nav-link" data-scene="0">Home</a>
+      <a href="#products" class="nav-link" data-scene="1">Products</a>
+      <a href="#about" class="nav-link" data-scene="2">About</a>
+      <a href="#reviews" class="nav-link" data-scene="2">Reviews</a>
+      <a href="#contact" class="nav-link" data-scene="3">Contact</a>
+    </nav>
+
+    <!-- 2. Hero Layer -->
+    <div class="layer-hero" id="layerHero">
+      <div class="frame hero-frame" id="heroFrame">
+        <img
+          class="hero-plate"
+          id="heroPlate"
+          src="velora_hero_plate.jpg"
+          alt="Velora Meadow Stone and Sunlit Sky"
+        />
+        <div class="hero-haze-overlay"></div>
+        <video
+          class="hero-video vid-a"
+          id="heroVidA"
+          muted
+          playsinline
+          preload="auto"
+          style="display:none;"
+        ></video>
+        <video
+          class="hero-video vid-b"
+          id="heroVidB"
+          muted
+          playsinline
+          preload="auto"
+          style="display:none;"
+        ></video>
+      </div>
+      <h1 class="wordmark" id="wordmark">VELORA</h1>
+    </div>
+
+    <!-- 3. Ingredients Layer -->
+    <div class="layer-ingr" id="layerIngr">
+      <div class="chip" id="chip0">
+        <div class="in-w">
+          <div class="chip-circle">
+            <i id="crop-acacia"></i>
+          </div>
+          <span class="chip-name">Wild Acacia</span>
+          <span class="chip-desc">Floral &amp; light</span>
+        </div>
+      </div>
+      <div class="chip" id="chip1">
+        <div class="in-w">
+          <div class="chip-circle">
+            <i id="crop-lavender"></i>
+          </div>
+          <span class="chip-name">Lavender</span>
+          <span class="chip-desc">Calms and soothes</span>
+        </div>
+      </div>
+      <div class="chip" id="chip2">
+        <div class="in-w">
+          <div class="chip-circle">
+            <i id="crop-blueberry"></i>
+          </div>
+          <span class="chip-name">Wild Blueberries</span>
+          <span class="chip-desc">Handpicked &amp; Raw</span>
+        </div>
+      </div>
+      <div class="chip" id="chip3">
+        <div class="in-w">
+          <div class="chip-circle">
+            <i id="crop-pollen"></i>
+          </div>
+          <span class="chip-name">Bee Pollen</span>
+          <span class="chip-desc">Protein &amp; Zinc</span>
+        </div>
+      </div>
+      <div class="chip" id="chip4">
+        <div class="in-w">
+          <div class="chip-circle">
+            <i id="crop-resin"></i>
+          </div>
+          <span class="chip-name">Bee Resin</span>
+          <span class="chip-desc">Supports your defences</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Benefits Layer -->
+    <div class="layer-bene" id="layerBene">
+      <div class="rows" id="beneRows">
+        <div class="row">
+          <div class="row-thumb">
+            <i id="crop-energy"></i>
+          </div>
+          <div class="row-text">
+            <h3>Clean Energy</h3>
+            <p>Natural sugars give steady energy that lasts all through the day.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-thumb">
+            <i id="crop-throat"></i>
+          </div>
+          <div class="row-text">
+            <h3>Soothes Throat</h3>
+            <p>One warm spoonful coats and calms a dry, tired throat.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-thumb">
+            <i id="crop-raw"></i>
+          </div>
+          <div class="row-text">
+            <h3>Raw &amp; Unfiltered</h3>
+            <p>Never heated or filtered, so each enzyme and pollen grain is kept.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Scene Layer -->
+    <div class="layer-scene" id="layerScene">
+      <img
+        class="scene-plate"
+        src="forest_scene_plate.jpg"
+        alt="Velora Forest Sanctuary"
+      />
+      <div class="cta-col">
+        <h2 class="tagline">FROM NATURE,<br>STRAIGHT TO YOU.</h2>
+        <a href="#home" class="discover-btn" id="discoverBtn" data-scene="0">Discover</a>
+      </div>
+    </div>
+
+    <!-- 6. Pinned Jar & Hand Cutouts -->
+    <img
+      class="jar-img"
+      id="jarImg"
+      src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261123_061027_50e61758-34cf-4e20-b115-380d40ae9a87.png&w=1024&q=85"
+      alt="HIVEN Raw Honey Glass Jar"
+      crossorigin="anonymous"
+    />
+    <img
+      class="hand-img"
+      id="handImg"
+      src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261123_061028_dd300bd1-4172-4809-abac-c1b9e7660381.png&w=1024&q=85"
+      alt="Presenting Hand"
+      crossorigin="anonymous"
+    />
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // -------------------------------------------------------------
+      // 1. Asset Constants & Sheet Crop Configurations
+      // -------------------------------------------------------------
+      const SHEET1_URL = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261123_060932_f7a02a74-f897-4398-b9ab-96ef9898e8bc.png&w=1024&q=85';
+      const SHEET2_URL = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261123_060932_90850cb3-1ec6-4622-b548-a8ca88dd30f0.png&w=1024&q=85';
+
+      const JAR_RAW_URL = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261123_061027_50e61758-34cf-4e20-b115-380d40ae9a87.png&w=1024&q=85';
+      const HAND_RAW_URL = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261123_061028_dd300bd1-4172-4809-abac-c1b9e7660381.png&w=1024&q=85';
+
+      const JAR_CROP = { x: 214, y: 158, w: 592, h: 680 };
+      const HAND_CROP = { x: 0, y: 240, w: 858, h: 262 };
+
+      const JAR_R = 910 / 669;
+      const HAND_R = 262 / 858;
+
+      // Apply Sheet Crops to background images
+      function applySheetCrop(elId, sheetUrl, pos) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        el.style.backgroundImage = `url('${sheetUrl}')`;
+        el.style.backgroundPosition = pos;
+      }
+
+      applySheetCrop('crop-acacia', SHEET1_URL, '1.15% 1.15%');
+      applySheetCrop('crop-lavender', SHEET1_URL, '98.85% 1.15%');
+      applySheetCrop('crop-blueberry', 'blueberry_chip.png', 'center center');
+      applySheetCrop('crop-honeycomb', SHEET1_URL, '1.15% 98.85%');
+      applySheetCrop('crop-pollen', SHEET1_URL, '98.85% 98.85%');
+      applySheetCrop('crop-resin', SHEET2_URL, '1.15% 1.15%');
+
+      applySheetCrop('crop-energy', SHEET2_URL, '98.85% 1.15%');
+      applySheetCrop('crop-throat', SHEET2_URL, '1.15% 98.85%');
+      applySheetCrop('crop-raw', SHEET2_URL, '98.85% 98.85%');
+
+      // -------------------------------------------------------------
+      // 2. Cutout Clean-Up (Alpha erosion and feathering in browser)
+      // -------------------------------------------------------------
+      function cleanCutout(url, crop) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = crop.w;
+              canvas.height = crop.h;
+              const ctx = canvas.getContext('2d', { willReadFrequently: true });
+              ctx.drawImage(img, crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w, crop.h);
+
+              const w = crop.w;
+              const h = crop.h;
+
+              // Erode alpha channel twice with 4-neighbour minimum filter
+              for (let pass = 0; pass < 2; pass++) {
+                const imgData = ctx.getImageData(0, 0, w, h);
+                const d = imgData.data;
+                const orig = new Uint8Array(d.length / 4);
+                for (let i = 0; i < orig.length; i++) orig[i] = d[i * 4 + 3];
+
+                for (let y = 0; y < h; y++) {
+                  for (let x = 0; x < w; x++) {
+                    const i = y * w + x;
+                    let minA = orig[i];
+                    if (x > 0) minA = Math.min(minA, orig[i - 1]);
+                    if (x < w - 1) minA = Math.min(minA, orig[i + 1]);
+                    if (y > 0) minA = Math.min(minA, orig[i - w]);
+                    if (y < h - 1) minA = Math.min(minA, orig[i + w]);
+                    d[i * 4 + 3] = minA;
+                  }
+                }
+                ctx.putImageData(imgData, 0, 0);
+              }
+
+              // Feather once: (4 * own alpha + 4 neighbours) / samples
+              const imgDataF = ctx.getImageData(0, 0, w, h);
+              const df = imgDataF.data;
+              const origF = new Uint8Array(df.length / 4);
+              for (let i = 0; i < origF.length; i++) origF[i] = df[i * 4 + 3];
+
+              for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                  const i = y * w + x;
+                  let sum = origF[i] * 4;
+                  let samples = 4;
+                  if (x > 0) { sum += origF[i - 1]; samples++; }
+                  if (x < w - 1) { sum += origF[i + 1]; samples++; }
+                  if (y > 0) { sum += origF[i - w]; samples++; }
+                  if (y < h - 1) { sum += origF[i + w]; samples++; }
+                  df[i * 4 + 3] = Math.round(sum / samples);
+                }
+              }
+              ctx.putImageData(imgDataF, 0, 0);
+
+              canvas.toBlob((blob) => {
+                if (blob) {
+                  resolve(URL.createObjectURL(blob));
+                } else {
+                  resolve(url);
+                }
+              }, 'image/webp', 0.92);
+            } catch (err) {
+              resolve(url);
+            }
+          };
+          img.onerror = () => resolve(url);
+          img.src = url;
+        });
+      }
+
+      // -------------------------------------------------------------
+      // 3. Mathematical Curves & Cubic-Bezier Solver
+      // -------------------------------------------------------------
+      function createCubicBezier(x1, y1, x2, y2) {
+        function sampleX(t) {
+          return ((1 - 3 * x2 + 3 * x1) * t + (3 * x2 - 6 * x1)) * t * t + 3 * x1 * t;
+        }
+        function sampleY(t) {
+          return ((1 - 3 * y2 + 3 * y1) * t + (3 * y2 - 6 * y1)) * t * t + 3 * y1 * t;
+        }
+        function sampleDerivX(t) {
+          return (3 * (1 - 3 * x2 + 3 * x1) * t + 2 * (3 * x2 - 6 * x1)) * t + 3 * x1;
+        }
+        return function (x) {
+          if (x <= 0) return 0;
+          if (x >= 1) return 1;
+          let t = x;
+          for (let i = 0; i < 8; i++) {
+            const currentX = sampleX(t) - x;
+            if (Math.abs(currentX) < 1e-5) return sampleY(t);
+            const d = sampleDerivX(t);
+            if (Math.abs(d) < 1e-6) break;
+            t -= currentX / d;
+          }
+          let t0 = 0, t1 = 1;
+          t = x;
+          while (t0 < t1) {
+            const currentX = sampleX(t);
+            if (Math.abs(currentX - x) < 1e-5) return sampleY(t);
+            if (x > currentX) t0 = t;
+            else t1 = t;
+            t = (t1 + t0) / 2;
+          }
+          return sampleY(t);
+        };
+      }
+
+      const EJ = createCubicBezier(0.3, 0, 0.05, 1);
+      const EP = createCubicBezier(0.3, 0, 0.15, 1);
+      const EF = createCubicBezier(0.25, 0.1, 0.25, 1);
+      const EY = createCubicBezier(0.5, 0, 0.1, 1);
+      const EINTRO = createCubicBezier(0.5, 0, 0, 1);
+
+      // -------------------------------------------------------------
+      // 4. Channel System (Smooth interruptible tweening)
+      // -------------------------------------------------------------
+      class Channel {
+        constructor(initialValue) {
+          this.current = initialValue;
+          this.target = initialValue;
+          this.from = initialValue;
+          this.startTime = 0;
+          this.duration = 0;
+          this.delay = 0;
+          this.ease = (t) => t;
+          this.active = false;
+        }
+
+        set(target, duration, ease, delay = 0) {
+          this.from = this.current;
+          this.target = target;
+          this.duration = duration;
+          this.delay = delay;
+          this.ease = ease || ((t) => t);
+          this.startTime = performance.now() + delay;
+          this.active = true;
+          if (duration <= 0) {
+            this.current = target;
+            this.active = false;
+          }
+        }
+
+        update(now) {
+          if (!this.active) return this.current;
+          if (now < this.startTime) return this.current;
+          const elapsed = now - this.startTime;
+          if (elapsed >= this.duration) {
+            this.current = this.target;
+            this.active = false;
+            return this.current;
+          }
+          const progress = elapsed / this.duration;
+          const eased = this.ease(progress);
+          this.current = this.from + (this.target - this.from) * eased;
+          return this.current;
+        }
+
+        snap(val) {
+          this.current = val;
+          this.target = val;
+          this.active = false;
+        }
+      }
+
+      // Channels
+      const chJarX = new Channel(720);
+      const chJarY = new Channel(505);
+      const chJarW = new Channel(205);
+      const chHero = new Channel(1);
+      const chBene = new Channel(0);
+      const chHandOut = new Channel(0);
+      const chRows = new Channel(0);
+      const chScene = new Channel(0);
+
+      let introOffset = 0;
+      let introStartTime = 0;
+      let isIntroRunning = true;
+
+      // -------------------------------------------------------------
+      // 5. Layout & Scaling System
+      // -------------------------------------------------------------
+      const stage = document.getElementById('stage');
+      const nav = document.getElementById('nav');
+      const wordmark = document.getElementById('wordmark');
+      const heroFrame = document.getElementById('heroFrame');
+      const layerHero = document.getElementById('layerHero');
+      const layerBene = document.getElementById('layerBene');
+      const layerScene = document.getElementById('layerScene');
+      const beneRows = document.getElementById('beneRows');
+      const jarImg = document.getElementById('jarImg');
+      const handImg = document.getElementById('handImg');
+
+      let vw = window.innerWidth;
+      let vh = window.innerHeight;
+      let isPortrait = false;
+      let s = 1, c = 1, fl = 0, ft = 0, ul = 0, ut = 0;
+      let navBottom = 50;
+
+      // Keyframes
+      let K0 = { x: 720, y: 505, w: 205 };
+      let K1 = { x: 720, y: 1012, w: 466 };
+      let K2 = { x: 465, y: 640, w: 300 };
+      let K4 = { x: 720, y: 520, w: 180 };
+
+      let hw = 900;
+      let hx0 = 0;
+      let handTop = 0;
+      let W_JAR = 466;
+
+      function F(x, y, w) {
+        return { x: fl + x * s, y: ft + y * s, w: w * s };
+      }
+
+      function U(x, y, w) {
+        return { x: ul + x * c, y: ut + y * c, w: w * c };
+      }
+
+      function computeLayout() {
+        vw = window.innerWidth;
+        vh = stage.clientHeight || window.innerHeight;
+        isPortrait = (vw / vh) < 0.9;
+
+        s = Math.max(vw / 1440, vh / 900);
+        fl = (vw - 1440 * s) / 2;
+        ft = (vh - 900 * s) / 2;
+
+        c = Math.min(vw / 1440, vh / 900);
+        ul = (vw - 1440 * c) / 2;
+        ut = (vh - 900 * c) / 2;
+
+        document.documentElement.style.setProperty('--s', `${s}px`);
+        document.documentElement.style.setProperty('--c', `${c}px`);
+        document.documentElement.style.setProperty('--fl', `${fl}px`);
+        document.documentElement.style.setProperty('--ft', `${ft}px`);
+        document.documentElement.style.setProperty('--ut', `${ut}px`);
+
+        const navRect = nav.getBoundingClientRect();
+        navBottom = navRect.bottom;
+
+        if (!isPortrait) {
+          // Desktop / Landscape
+          const chipSize = Math.max(44, 116 * c);
+          const cnSize = Math.max(12, 21 * c);
+          const csSize = Math.max(11, 17.5 * c);
+          const rtSize = Math.max(48, 96 * c);
+          const rhSize = Math.max(14, 25 * c);
+          const rpSize = Math.max(11, 16.5 * c);
+          const rgSize = Math.max(14, 40 * c);
+          const rwSize = Math.max(200, 330 * c);
+          const thSize = Math.max(17, 34 * c);
+          const tfSize = Math.max(12, 16 * c);
+          const tbSize = Math.max(16, 30 * c);
+
+          document.documentElement.style.setProperty('--chip', `${chipSize}px`);
+          document.documentElement.style.setProperty('--cn', `${cnSize}px`);
+          document.documentElement.style.setProperty('--cs', `${csSize}px`);
+          document.documentElement.style.setProperty('--rt', `${rtSize}px`);
+          document.documentElement.style.setProperty('--rh', `${rhSize}px`);
+          document.documentElement.style.setProperty('--rp', `${rpSize}px`);
+          document.documentElement.style.setProperty('--rg', `${rgSize}px`);
+          document.documentElement.style.setProperty('--rw', `${rwSize}px`);
+          document.documentElement.style.setProperty('--th', `${thSize}px`);
+          document.documentElement.style.setProperty('--tf', `${tfSize}px`);
+          document.documentElement.style.setProperty('--tb', `${tbSize}px`);
+
+          // Jar keyframes
+          K0 = F(720, 505, 205);
+
+          const dy = Math.max(0, navBottom + 6 - (ut + 196 * c - chipSize / 2));
+          K1 = U(720, 1012, 466);
+          K1.y += dy;
+
+          K2 = U(465, 640, 300);
+          hw = K2.w * 3.05;
+          hx0 = K2.x - 0.56 * hw;
+          K2.x = hx0 + 0.63 * hw;
+          handTop = K2.y + 0.13 * (K2.w * JAR_R) - 0.30 * (hw * HAND_R);
+
+          const forestScale = Math.max(vw / 1024, vh / 512);
+          const forestJarW = Math.min(145 * forestScale, 0.16 * vw);
+          K4 = { x: vw / 2, y: 300 * forestScale, w: forestJarW };
+
+          // Position 5 chips
+          const kx = Math.max(c, 0.96 * vw / 1440);
+          const chipCoords = [
+            { id: 'chip0', x: 230, y: 421 },
+            { id: 'chip1', x: 454, y: 268 },
+            { id: 'chip2', x: 720, y: 196 },
+            { id: 'chip3', x: 988, y: 278 },
+            { id: 'chip4', x: 1212, y: 439 },
+          ];
+
+          chipCoords.forEach((ch) => {
+            const el = document.getElementById(ch.id);
+            if (!el) return;
+            const sx = vw / 2 + (ch.x - 720) * kx;
+            const sy = ut + ch.y * c + dy;
+            el.style.left = `${sx}px`;
+            el.style.top = `${sy}px`;
+          });
+
+          // Position benefits rows
+          beneRows.style.left = `${ul + 915 * c}px`;
+          beneRows.style.right = 'auto';
+        } else {
+          // Portrait Mode (vw/vh < 0.9)
+          const chipSize = Math.min(Math.max(58, 0.17 * vw), 96);
+          const cnSize = Math.min(Math.max(12, 0.034 * vw), 17);
+          const csSize = Math.min(Math.max(11, 0.029 * vw), 15);
+          const rtSize = Math.min(Math.max(48, 0.13 * vw), 76);
+          const rhSize = Math.min(Math.max(15, 0.042 * vw), 22);
+          const rpSize = Math.min(Math.max(12, 0.033 * vw), 16);
+          const rgSize = Math.min(Math.max(12, 0.022 * vh), 26);
+          const thSize = Math.min(Math.max(16, 0.052 * vw), 34);
+
+          document.documentElement.style.setProperty('--chip', `${chipSize}px`);
+          document.documentElement.style.setProperty('--cn', `${cnSize}px`);
+          document.documentElement.style.setProperty('--cs', `${csSize}px`);
+          document.documentElement.style.setProperty('--rt', `${rtSize}px`);
+          document.documentElement.style.setProperty('--rh', `${rhSize}px`);
+          document.documentElement.style.setProperty('--rp', `${rpSize}px`);
+          document.documentElement.style.setProperty('--rg', `${rgSize}px`);
+          document.documentElement.style.setProperty('--rw', '100%');
+          document.documentElement.style.setProperty('--th', `${thSize}px`);
+          document.documentElement.style.setProperty('--tf', '14px');
+          document.documentElement.style.setProperty('--tb', '20px');
+
+          // Jar keyframes portrait
+          K0 = F(720, 505, 205);
+          if (K0.w > 0.38 * vw) {
+            K0.w = 0.38 * vw;
+          }
+
+          const topY = Math.max(64, 0.06 * vh) + chipSize / 2 + 8;
+          const row2Y = topY + chipSize + Math.max(84, 0.10 * vh);
+
+          const portChips = [
+            { id: 'chip1', x: 0.20 * vw, y: topY + 0.35 * chipSize },
+            { id: 'chip2', x: 0.50 * vw, y: topY },
+            { id: 'chip3', x: 0.80 * vw, y: topY + 0.35 * chipSize },
+            { id: 'chip0', x: 0.25 * vw, y: row2Y },
+            { id: 'chip4', x: 0.75 * vw, y: row2Y },
+          ];
+
+          let lowestChipLabelBottom = 0;
+          portChips.forEach((ch) => {
+            const el = document.getElementById(ch.id);
+            if (!el) return;
+            const sy = ch.y + 0.55 * chipSize;
+            el.style.left = `${ch.x}px`;
+            el.style.top = `${sy}px`;
+            const bottomEstimate = sy + chipSize * 0.5 + 40;
+            if (bottomEstimate > lowestChipLabelBottom) lowestChipLabelBottom = bottomEstimate;
+          });
+
+          const w1 = Math.min(0.72 * vw, 0.42 * vh);
+          const y1 = Math.max(vh + 0.16 * w1 * JAR_R, lowestChipLabelBottom + 10 + w1 * JAR_R);
+          K1 = { x: vw / 2, y: y1, w: w1 };
+
+          const w2 = Math.min(0.40 * vw, 0.22 * vh);
+          K2 = { x: vw / 2, y: 0.80 * vh, w: w2 };
+          hw = 3.2 * w2;
+          hx0 = K2.x - 0.63 * hw;
+          handTop = K2.y + 0.13 * (K2.w * JAR_R) - 0.30 * (hw * HAND_R);
+
+          const forestScale = Math.max(vw / 1024, vh / 512);
+          const forestJarW = Math.min(145 * forestScale, 0.16 * vw);
+          K4 = { x: vw / 2, y: 300 * forestScale, w: forestJarW };
+
+          beneRows.style.left = `${Math.max(18, 0.06 * vw)}px`;
+          beneRows.style.right = `${Math.max(18, 0.06 * vw)}px`;
+          beneRows.style.top = `${Math.max(64, 0.07 * vh) + 10}px`;
+          beneRows.style.transform = 'none';
+        }
+
+        W_JAR = Math.max(K0.w, K1.w, K2.w, K4.w, 466);
+        jarImg.style.width = `${W_JAR}px`;
+        handImg.style.width = `${hw}px`;
+
+        // Measure and position Wordmark
+        positionWordmark();
+      }
+
+      function positionWordmark() {
+        const targetWidth = isPortrait ? 0.9 * vw : Math.min(1080 * s, 0.92 * vw);
+        // Measure with range
+        const range = document.createRange();
+        range.selectNodeContents(wordmark);
+        let rect = range.getBoundingClientRect();
+        if (rect.width > 0) {
+          const currentFont = parseFloat(window.getComputedStyle(wordmark).fontSize) || 120;
+          const newFont = (targetWidth / rect.width) * currentFont;
+          wordmark.style.fontSize = `${newFont}px`;
+        }
+
+        // Cap height is 0.708em, visible cap top sits 0.2em below element top
+        const fontSize = parseFloat(wordmark.style.fontSize) || 120;
+        const jarH0 = K0.w * JAR_R;
+        const jarTop0 = K0.y - jarH0;
+        const capCenterY = jarTop0 + 0.25 * jarH0;
+        const elementTop = capCenterY - (0.2 + 0.708 / 2) * fontSize;
+
+        const safeTop = Math.max(elementTop, navBottom + 28);
+        wordmark.style.top = `${safeTop}px`;
+      }
+
+      // -------------------------------------------------------------
+      // 6. State Machine & Transitions
+      // -------------------------------------------------------------
+      let currentState = 0; // 0, 1, 2, 3
+      let isInputLocked = false;
+      let timerClassIngr = null;
+      let timerClassBene = null;
+      let timerClassScene = null;
+
+      function clearClassTimers() {
+        if (timerClassIngr) clearTimeout(timerClassIngr);
+        if (timerClassBene) clearTimeout(timerClassBene);
+        if (timerClassScene) clearTimeout(timerClassScene);
+        timerClassIngr = null;
+        timerClassBene = null;
+        timerClassScene = null;
+      }
+
+      function transitionTo(nextState, instant = false) {
+        if (nextState < 0) nextState = 0;
+        if (nextState > 3) nextState = 3;
+        const prevState = currentState;
+        currentState = nextState;
+
+        clearClassTimers();
+
+        if (instant) {
+          stage.classList.remove('ingr-on', 'bene-on', 'scene-on');
+          if (nextState === 0) {
+            chJarX.snap(K0.x); chJarY.snap(K0.y); chJarW.snap(K0.w);
+            chHero.snap(1); chBene.snap(0); chHandOut.snap(0); chRows.snap(0); chScene.snap(0);
+          } else if (nextState === 1) {
+            chJarX.snap(K1.x); chJarY.snap(K1.y); chJarW.snap(K1.w);
+            chHero.snap(0); chBene.snap(0); chHandOut.snap(0); chRows.snap(0); chScene.snap(0);
+            stage.classList.add('ingr-on');
+          } else if (nextState === 2) {
+            chJarX.snap(K2.x); chJarY.snap(K2.y); chJarW.snap(K2.w);
+            chHero.snap(0); chBene.snap(1); chHandOut.snap(0); chRows.snap(1); chScene.snap(0);
+            stage.classList.add('bene-on');
+          } else if (nextState === 3) {
+            chJarX.snap(K4.x); chJarY.snap(K4.y); chJarW.snap(K4.w);
+            chHero.snap(0); chBene.snap(1); chHandOut.snap(1); chRows.snap(0); chScene.snap(1);
+            stage.classList.add('scene-on');
+          }
+          return;
+        }
+
+        // Stepped Transitions
+        if (nextState === 0) {
+          // To 0 (Hero)
+          stage.classList.remove('ingr-on', 'bene-on', 'scene-on');
+          chJarX.set(K0.x, 1150, EJ);
+          chJarY.set(K0.y, 1150, EJ);
+          chJarW.set(K0.w, 1150, EJ);
+
+          chHero.set(1, 700, EP);
+          chBene.set(0, 650, EP);
+          chHandOut.set(0, 500, EP);
+          chRows.set(0, 400, EF);
+          chScene.set(0, 650, EP);
+
+          playHeroVideos();
+        } else if (nextState === 1) {
+          // To 1 (Ingredients)
+          stage.classList.remove('bene-on', 'scene-on');
+          chJarX.set(K1.x, 1150, EJ);
+          chJarY.set(K1.y, 1150, EJ);
+          chJarW.set(K1.w, 1150, EJ);
+
+          chHero.set(0, 700, EP);
+          chBene.set(0, 650, EP);
+          chHandOut.set(0, 500, EP);
+          chRows.set(0, 400, EF);
+          chScene.set(0, 650, EP);
+
+          const delay = (prevState < 1) ? 1000 : 600;
+          timerClassIngr = setTimeout(() => {
+            stage.classList.add('ingr-on');
+          }, delay);
+        } else if (nextState === 2) {
+          // To 2 (Benefits)
+          stage.classList.remove('ingr-on', 'scene-on');
+          chJarX.set(K2.x, 1150, EJ);
+          chJarY.set(K2.y, 1150, EJ);
+          chJarW.set(K2.w, 1150, EJ);
+
+          chHero.set(0, 700, EP);
+          chBene.set(1, 650, EP);
+          chScene.set(0, 650, EP);
+
+          if (prevState === 3) {
+            // Coming back from 3
+            chHandOut.set(0, 650, EP, 150);
+            chRows.set(1, 500, EF, 300);
+          } else {
+            chHandOut.set(0, 500, EP);
+            chRows.set(1, 500, EF);
+          }
+
+          const delay = (prevState < 2) ? 550 : 350;
+          timerClassBene = setTimeout(() => {
+            stage.classList.add('bene-on');
+          }, delay);
+        } else if (nextState === 3) {
+          // To 3 (Scene)
+          stage.classList.remove('ingr-on', 'bene-on');
+
+          if (prevState === 2) {
+            // One continuous path to K4 with per-axis durations
+            chJarX.set(K4.x, 700, EJ);
+            chJarY.set(K4.y, 1600, EY);
+            chJarW.set(K4.w, 1600, EJ);
+          } else {
+            chJarX.set(K4.x, 1150, EJ);
+            chJarY.set(K4.y, 1150, EJ);
+            chJarW.set(K4.w, 1150, EJ);
+          }
+
+          chHandOut.set(1, 600, EP);
+          chRows.set(0, 400, EF);
+          chScene.set(1, 650, EP, 350);
+
+          timerClassScene = setTimeout(() => {
+            stage.classList.add('scene-on');
+          }, 1350);
+        }
+
+        // Lock input for 1000ms
+        isInputLocked = true;
+        setTimeout(() => {
+          isInputLocked = false;
+        }, 1000);
+      }
+
+      // -------------------------------------------------------------
+      // 7. Render Loop (Runs per requestAnimationFrame)
+      // -------------------------------------------------------------
+      function render(now) {
+        // Update Intro
+        if (isIntroRunning) {
+          const elapsed = now - introStartTime;
+          if (elapsed >= 1600) {
+            introOffset = 0;
+            isIntroRunning = false;
+          } else {
+            const p = elapsed / 1600;
+            const eased = EINTRO(p);
+            introOffset = (1 - eased) * 0.276 * vh;
+          }
+        }
+
+        // Update Channels
+        const jx = chJarX.update(now);
+        const jy = chJarY.update(now);
+        const jw = chJarW.update(now);
+
+        const vHero = chHero.update(now);
+        const vBene = chBene.update(now);
+        const vHandOut = chHandOut.update(now);
+        const vRows = chRows.update(now);
+        const vScene = chScene.update(now);
+
+        // Apply Hero layer transform & opacity
+        layerHero.style.opacity = vHero;
+        heroFrame.style.transform = `translate3d(0, ${introOffset}px, 0) scale(${1 + (1 - vHero) * 0.06})`;
+
+        // Apply Benefits panel
+        layerBene.style.transform = `translate3d(0, ${(1 - vBene) * 100}%, 0)`;
+        beneRows.style.opacity = vRows;
+
+        // Apply Scene layer
+        layerScene.style.transform = `translate3d(0, ${(1 - vScene) * 100}%, 0)`;
+
+        // Nav lightness toggle (> 0.96)
+        if (vScene > 0.96) {
+          nav.classList.add('light');
+        } else {
+          nav.classList.remove('light');
+        }
+
+        // Jar transform
+        if (W_JAR > 0) {
+          const tx = jx - W_JAR / 2;
+          const ty = jy - W_JAR * JAR_R + introOffset;
+          const scale = jw / W_JAR;
+          jarImg.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
+        }
+
+        // Hand transform
+        const hx = hx0 - vHandOut * (hx0 + 1.05 * hw);
+        const hy = handTop + (1 - vBene) * vh;
+        handImg.style.transform = `translate3d(${hx.toFixed(2)}px, ${hy.toFixed(2)}px, 0)`;
+
+        // Pause/resume videos if hero is hidden
+        if (currentState !== 0 && vHero < 0.01) {
+          pauseHeroVideos();
+        }
+
+        requestAnimationFrame(render);
+      }
+
+      // -------------------------------------------------------------
+      // 8. Hero Water Video Crossfade Loop
+      // -------------------------------------------------------------
+      const vidA = document.getElementById('heroVidA');
+      const vidB = document.getElementById('heroVidB');
+      let currentActiveVid = vidA;
+      let isVideoLoopSetup = false;
+
+      function setupVideoLoop() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (isVideoLoopSetup) return;
+        isVideoLoopSetup = true;
+
+        vidA.addEventListener('playing', () => {
+          vidA.style.opacity = '1';
+        }, { once: true });
+
+        vidA.play().catch(() => {});
+
+        // Timeupdate crossfade 0.6s before end
+        function checkCrossfade(active, next) {
+          active.addEventListener('timeupdate', function onTime() {
+            if (active.duration && active.currentTime >= active.duration - 0.6) {
+              active.removeEventListener('timeupdate', onTime);
+              next.currentTime = 0;
+              next.play().then(() => {
+                next.style.opacity = '1';
+                setTimeout(() => {
+                  active.pause();
+                  active.style.opacity = '0';
+                  // Swap roles
+                  checkCrossfade(next, active);
+                }, 600);
+              }).catch(() => {});
+            }
+          });
+        }
+
+        checkCrossfade(vidA, vidB);
+      }
+
+      function playHeroVideos() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (vidA.paused && vidB.paused) {
+          vidA.play().catch(() => {});
+        }
+      }
+
+      function pauseHeroVideos() {
+        if (!vidA.paused) vidA.pause();
+        if (!vidB.paused) vidB.pause();
+      }
+
+      // -------------------------------------------------------------
+      // 9. Input Handling (Wheel, Touch, Keyboard)
+      // -------------------------------------------------------------
+      let lastWheelTime = 0;
+      let lastDelta = 0;
+      let accumulatedDelta = 0;
+
+      window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (isInputLocked) return;
+
+        const now = performance.now();
+        const delta = e.deltaY;
+        const timeDiff = now - lastWheelTime;
+
+        // Fresh gesture detection
+        const isFresh = (timeDiff > 160) || (Math.abs(delta) > 1.6 * Math.abs(lastDelta) + 4);
+        if (isFresh) accumulatedDelta = 0;
+
+        lastWheelTime = now;
+        lastDelta = delta;
+        accumulatedDelta += delta;
+
+        if (Math.abs(accumulatedDelta) >= 24) {
+          const step = Math.sign(accumulatedDelta);
+          accumulatedDelta = 0;
+          transitionTo(currentState + step);
+        }
+      }, { passive: false });
+
+      // Touch
+      let touchStartY = 0;
+      window.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length > 0) {
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+      }, { passive: false });
+
+      window.addEventListener('touchend', (e) => {
+        if (isInputLocked) return;
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          const dist = touchStartY - e.changedTouches[0].clientY;
+          if (Math.abs(dist) > 40) {
+            const step = Math.sign(dist);
+            transitionTo(currentState + step);
+          }
+        }
+      }, { passive: true });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (isInputLocked) return;
+        if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
+          e.preventDefault();
+          transitionTo(currentState + 1);
+        } else if (['ArrowUp', 'PageUp'].includes(e.key)) {
+          e.preventDefault();
+          transitionTo(currentState - 1);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          transitionTo(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          transitionTo(3);
+        }
+      });
+
+      // Navigation links
+      document.querySelectorAll('[data-scene]').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = parseInt(link.getAttribute('data-scene'), 10);
+          transitionTo(target);
+        });
+      });
+
+      // Window Resize
+      window.addEventListener('resize', () => {
+        computeLayout();
+        transitionTo(currentState, true);
+      });
+
+      // -------------------------------------------------------------
+      // 10. Load Sequence & Public Hook
+      // -------------------------------------------------------------
+      window.hiven = {
+        go: (n, instant = false) => transitionTo(n, instant),
+        get state() { return currentState; }
+      };
+
+      const fontCheck = document.fonts ? document.fonts.ready : Promise.resolve();
+      const cleanHandPromise = cleanCutout(HAND_RAW_URL, HAND_CROP);
+
+      let introStarted = false;
+      function startIntro() {
+        if (introStarted) return;
+        introStarted = true;
+
+        computeLayout();
+        transitionTo(0, true);
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.documentElement.classList.remove('intro');
+
+        if (prefersReducedMotion) {
+          isIntroRunning = false;
+          introOffset = 0;
+          return;
+        }
+
+        introStartTime = performance.now();
+        isIntroRunning = true;
+
+        // Wordmark and Nav fade in
+        nav.style.opacity = '0';
+        wordmark.style.opacity = '0';
+
+        setTimeout(() => {
+          nav.style.transition = 'opacity 0.35s ease-out';
+          nav.style.opacity = '1';
+        }, 0);
+
+        setTimeout(() => {
+          wordmark.style.transition = 'opacity 0.45s ease-out';
+          wordmark.style.opacity = '1';
+        }, 60);
+
+        setupVideoLoop();
+      }
+
+      // 3.5s Failsafe
+      const failsafe = setTimeout(startIntro, 3500);
+
+      Promise.all([fontCheck, cleanHandPromise]).then(([_, handSrc]) => {
+        clearTimeout(failsafe);
+        jarImg.src = 'velora_jar.png';
+        handImg.src = handSrc;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(startIntro);
+        });
+      });
+
+      // Kick off render loop
+      requestAnimationFrame(render);
+    })();
+  </script>
+</body>
+</html>
